@@ -1,6 +1,6 @@
 // GitHub Gist sync. The token and gist ID live only in this device's localStorage.
 
-import { store, merge, normalize } from './store.js';
+import { store, merge, normalize } from './store.js?v=202610070145';
 
 const AUTH_KEY = 'rhythm.auth';
 const FILE = 'data.json';

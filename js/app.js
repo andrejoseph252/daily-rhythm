@@ -3,11 +3,11 @@
 import {
   WEEKDAYS, WEEKDAYS_SHORT, MONTHS, todayKey, addDays, fromKey, isValidKey, isoWeekday,
   isoWeek, dayOfYear, daysInYear, weekKeys, formatMinutes, parseDuration,
-} from './dates.js';
-import { store, uid, isDue } from './store.js';
-import { initSync, scheduleSync, syncNow, onStatus, getAuth, setAuth, status as syncStatus } from './sync.js';
-import { quoteFor } from './quotes.js';
-import { initFocus, openFocus, isFocusOpen } from './focus.js';
+} from './dates.js?v=202610070145';
+import { store, uid, isDue } from './store.js?v=202610070145';
+import { initSync, scheduleSync, syncNow, onStatus, getAuth, setAuth, status as syncStatus } from './sync.js?v=202610070145';
+import { quoteFor } from './quotes.js?v=202610070145';
+import { initFocus, openFocus, isFocusOpen } from './focus.js?v=202610070145';
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -89,6 +89,12 @@ function subjects() {
     for (const b of d.blocks) if (b.subject) counts.set(b.subject, (counts.get(b.subject) || 0) + 1);
   }
   return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([s]) => s);
+}
+
+/** Let a textarea grow to fit its text, one ruled line at a time. */
+function autoGrow(t) {
+  t.style.height = 'auto';
+  t.style.height = `${t.scrollHeight}px`;
 }
 
 /** Set an input's value without disturbing someone typing in it. */
@@ -173,7 +179,9 @@ function renderToday() {
   // Today's three
   const items = $('three').querySelectorAll('.three__item');
   day.priorities.forEach((p, i) => {
-    setValue(items[i].querySelector('.three__text'), p.text);
+    const text = items[i].querySelector('.three__text');
+    setValue(text, p.text);
+    autoGrow(text);
     items[i].querySelector('input[type=checkbox]').checked = p.done;
   });
   const filled = day.priorities.filter(p => p.text.trim()).length;
@@ -234,11 +242,18 @@ function renderToday() {
 
   // Evening
   setValue($('note'), day.note);
+  autoGrow($('note'));
 }
 
 function renderWeek() {
   const list = $('week-list');
   list.replaceChildren();
+  const head = el('li', 'wrow wrow--head');
+  head.setAttribute('aria-hidden', 'true');
+  for (const [cls, text] of [['date', ''], ['habits', 'Habits'], ['three', 'Three'], ['hrs', 'Work'], ['note', 'Evening']]) {
+    head.append(el('span', `wrow__${cls}`, text));
+  }
+  list.append(head);
   const today = todayKey();
   let hours = 0, hDone = 0, hDue = 0, notes = 0, pieces = 0;
 
@@ -401,7 +416,8 @@ function wireToday() {
   three.addEventListener('input', e => {
     const t = e.target;
     if (!t.classList.contains('three__text')) return;
-    store.updateDay(state.date, d => { d.priorities[+t.dataset.i].text = t.value; });
+    autoGrow(t);
+    store.updateDay(state.date, d => { d.priorities[+t.dataset.i].text = t.value.replace(/\s*\n\s*/g, ' '); });
   });
   three.addEventListener('change', e => {
     const t = e.target;
@@ -449,9 +465,13 @@ function wireToday() {
   });
 
   $('note').addEventListener('input', e => {
-    store.updateDay(state.date, d => { d.note = e.target.value; });
+    autoGrow(e.target);
+    store.updateDay(state.date, d => { d.note = e.target.value.replace(/\s*\n\s*/g, ' '); });
   });
-  $('note').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+  $('note').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+  const regrow = () => document.querySelectorAll('.three__text, .note').forEach(autoGrow);
+  window.addEventListener('resize', regrow);
+  document.fonts?.ready.then(regrow);   // heights measured with the fallback font are off
 }
 
 function wireSettings() {
@@ -557,7 +577,7 @@ function wireNavigation() {
   let sx = 0, sy = 0, st = 0, tracking = false;
   const area = $('view-today');
   area.addEventListener('touchstart', e => {
-    if (e.touches.length !== 1 || e.target.closest('input, button, .weekstrip')) { tracking = false; return; }
+    if (e.touches.length !== 1 || e.target.closest('input, textarea, button, .weekstrip')) { tracking = false; return; }
     tracking = true;
     sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
   }, { passive: true });

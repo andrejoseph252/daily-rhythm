@@ -1,8 +1,8 @@
 // Focus sessions: a quiet timer that knits while you work.
 // Leave the page for longer than the grace period and the piece slips off the needle.
 
-import { drawKnit } from './knit.js';
-import { pad, todayKey } from './dates.js';
+import { drawKnit } from './knit.js?v=202610070145';
+import { pad, todayKey } from './dates.js?v=202610070145';
 
 const SESSION_KEY = 'rhythm.focus';
 const PREFS_KEY = 'rhythm.focusPrefs';

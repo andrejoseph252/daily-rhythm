@@ -1,6 +1,6 @@
 // A small, hand-picked commonplace book. One quotation per day.
 
-import { dayOfYear, fromKey } from './dates.js';
+import { dayOfYear, fromKey } from './dates.js?v=202610070145';
 
 export const QUOTES = [
   ['How we spend our days is, of course, how we spend our lives.', 'Annie Dillard, The Writing Life'],

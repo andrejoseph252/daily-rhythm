@@ -168,6 +168,16 @@ The gist holds one file, `data.json`:
 
 Device-only keys in `localStorage`: `rhythm.data` (offline cache), `rhythm.auth` (token and gist ID), `rhythm.theme`, `rhythm.focus` (a running session) and `rhythm.focusPrefs` (last subject and length).
 
+## Releasing changes
+
+Before each push, run:
+
+```sh
+./tools/bump-version.sh
+```
+
+This stamps the stylesheet and script URLs with a new version (`style.css?v=…`). GitHub Pages lets browsers cache files for 10 minutes, and without the stamp a browser can combine a new `index.html` with an old stylesheet and show a broken page.
+
 ## Files
 
 ```
@@ -180,6 +190,7 @@ js/focus.js           focus session lifecycle, length dial, grace period, wake l
 js/knit.js            the knitted Selbu-star swatch, drawn on a canvas
 js/dates.js           date keys, ISO weeks, duration parsing and formatting
 js/quotes.js          the daily quotations
+tools/bump-version.sh cache-busting version stamp for deploys
 icons/                home-screen icon (knitted Selbu star) and favicon
 manifest.webmanifest  web-app name, colours and icons
 ```
