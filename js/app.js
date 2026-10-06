@@ -34,13 +34,18 @@ function parseRoute() {
 }
 
 function route() {
-  const prev = state.date;
+  const prev = state.date, prevView = state.view;
   Object.assign(state, parseRoute());
+  if (prevView !== state.view) { $('scroller').scrollTop = 0; window.scrollTo(0, 0); }
   document.body.dataset.view = state.view;
   for (const v of ['today', 'week', 'settings']) {
     $(`view-${v}`).hidden = v !== state.view;
-    $(`nav-${v}`).toggleAttribute('aria-current', v === state.view);
+    $(`nav-${v}`)?.toggleAttribute('aria-current', v === state.view);
   }
+  const back = state.view === 'settings';
+  $('settings-link').href = back ? dayHref(state.date) : '#/settings';
+  $('settings-link').setAttribute('aria-label', back ? 'Close settings' : 'Settings');
+  $('settings-link').toggleAttribute('aria-current', back);
   render();
   if (state.view === 'today' && prev !== state.date) slide(state.date > prev ? 'next' : 'prev');
   if (state.focus) {
@@ -542,6 +547,7 @@ function wireNavigation() {
     else if (state.view === 'week' && e.key === 'ArrowLeft') go(`#/week/${addDays(state.date, -7)}`);
     else if (state.view === 'week' && e.key === 'ArrowRight') go(`#/week/${addDays(state.date, 7)}`);
     else if (k === 't') go('#/');
+    else if (k === 's') go(state.view === 'settings' ? dayHref(state.date) : '#/settings');
     else if (k === 'w') go(`#/week/${state.date}`);
     else if (k === 'f') { e.preventDefault(); openFocus(); }
     else return;

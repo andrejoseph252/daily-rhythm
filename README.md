@@ -99,6 +99,7 @@ Press **Begin focus** (or `F`, or open `#/focus`), name what you're working on, 
 | `T` | Today |
 | `W` | Week |
 | `F` | Begin focus |
+| `S` | Settings (or the sliders icon in the top-right corner) |
 | `Enter` | Next priority |
 | `Esc` | Leave a field |
 
