@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Daily Rhythm</title>
+  <meta name="description" content="A calm daily notebook: three priorities, quiet habits, focused work.">
+  <meta name="theme-color" content="#E9F1F4">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Rhythm">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    try {
+      var t = localStorage.getItem('rhythm.theme');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body data-view="today">
+  <div class="page">
+
+    <!-- ===== Masthead ===== -->
+    <header class="sheet hero">
+      <svg class="horizon" viewBox="0 0 760 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="sky-top"/>
+            <stop offset="1" class="sky-bottom"/>
+          </linearGradient>
+        </defs>
+        <rect width="760" height="120" fill="url(#sky)"/>
+        <circle class="sun" cx="380" cy="58" r="18"/>
+        <path class="ridge-far" d="M0 96 V54 L40 38 L80 50 L130 22 L190 56 L250 74 L330 86 L430 88 L500 72 L560 40 L610 52 L660 26 L720 44 L760 38 V96 Z"/>
+        <path class="ridge-near" d="M0 96 V66 L50 58 L100 70 L160 84 L230 94 L250 96 Z"/>
+        <path class="ridge-near" d="M760 96 V60 L710 66 L650 78 L590 90 L548 96 Z"/>
+        <rect class="water" x="0" y="96" width="760" height="24"/>
+        <g class="ripples">
+          <path d="M300 102 h60 M420 102 h40 M250 108 h30 M340 108 h90 M470 108 h50 M380 114 h60 M200 114 h40 M520 114 h30"/>
+        </g>
+        <g class="pines">
+          <polygon points="24,70 30,90 18,90"/>
+          <polygon points="40,62 47,90 33,90"/>
+          <polygon points="58,72 63,92 53,92"/>
+          <polygon points="566,80 571,94 561,94"/>
+          <polygon points="582,74 588,92 576,92"/>
+          <polygon points="600,79 605,90 595,90"/>
+          <polygon points="642,72 648,92 636,92"/>
+          <polygon points="660,64 667,90 653,90"/>
+          <polygon points="684,70 690,90 678,90"/>
+          <polygon points="706,60 713,88 699,88"/>
+          <polygon points="728,66 734,86 722,86"/>
+        </g>
+        <g class="cabin">
+          <rect class="cabin__wall" x="200" y="85" width="15" height="9"/>
+          <polygon class="cabin__roof" points="197,85 207.5,78 218,85"/>
+        </g>
+      </svg>
+
+      <p class="sync" id="sync" data-state="local" aria-live="polite"><span class="sync__dot"></span><span class="sync__text">saved on this device</span></p>
+
+      <div class="hero__body hero__body--day">
+        <div class="hero__date">
+          <span class="hero__numeral" id="hero-numeral"></span>
+          <div class="hero__meta">
+            <p class="hero__weekday" id="hero-weekday"></p>
+            <h1 class="hero__month" id="hero-month"></h1>
+            <p class="hero__count" id="hero-count"></p>
+          </div>
+        </div>
+        <div class="hero__aside">
+          <nav class="daynav" aria-label="Change day">
+            <a href="#" class="daynav__btn" id="prev-day" aria-label="Previous day" title="Previous day (←)">‹</a>
+            <a href="#/" class="daynav__today" id="go-today" title="Today (T)">Today</a>
+            <a href="#" class="daynav__btn" id="next-day" aria-label="Next day" title="Next day (→)">›</a>
+          </nav>
+          <button type="button" class="focus-btn" id="focus-open" title="Begin focus (F)">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="11" r="6.2"/><path d="M4.6 8.6c2.6.4 5.6 2.3 7 5.6M5.4 13.8c1.6-1.9 4.6-3.6 8.4-3.3M9.8 4.9c-.5 2-.3 4.3 1.2 6.4M14.5 5.5 18 2"/></svg>
+            <span>Begin focus</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero__body hero__body--page">
+        <div>
+          <p class="hero__weekday" id="page-eyebrow"></p>
+          <h1 class="hero__month" id="page-title"></h1>
+        </div>
+        <nav class="daynav" id="week-nav" aria-label="Change week">
+          <a href="#" class="daynav__btn" id="prev-week" aria-label="Previous week">‹</a>
+          <a href="#/week" class="daynav__today" id="this-week">This week</a>
+          <a href="#" class="daynav__btn" id="next-week" aria-label="Next week">›</a>
+        </nav>
+      </div>
+
+      <figure class="epigraph">
+        <blockquote id="quote-text"></blockquote>
+        <figcaption id="quote-by"></figcaption>
+      </figure>
+    </header>
+
+    <!-- ===== Today ===== -->
+    <div class="view view--today" id="view-today">
+      <nav class="weekstrip" id="weekstrip" aria-label="This week"></nav>
+
+      <main class="grid" id="today-grid">
+        <section class="sheet block block--three" aria-labelledby="h-three">
+          <header class="block__head">
+            <span class="block__no">I</span>
+            <h2 class="block__title" id="h-three">Today’s three</h2>
+            <span class="block__aside" id="three-aside"></span>
+          </header>
+          <ol class="three" id="three">
+            <li class="three__item">
+              <span class="three__num">i</span>
+              <input type="text" class="three__text" data-i="0" data-fk="p0" placeholder="The one that matters most" aria-label="Priority 1" autocomplete="off">
+              <label class="check"><input type="checkbox" data-i="0" data-fk="c0"><span class="check__mark"></span><span class="visually-hidden">Done</span></label>
+            </li>
+            <li class="three__item">
+              <span class="three__num">ii</span>
+              <input type="text" class="three__text" data-i="1" data-fk="p1" placeholder="A second" aria-label="Priority 2" autocomplete="off">
+              <label class="check"><input type="checkbox" data-i="1" data-fk="c1"><span class="check__mark"></span><span class="visually-hidden">Done</span></label>
+            </li>
+            <li class="three__item">
+              <span class="three__num">iii</span>
+              <input type="text" class="three__text" data-i="2" data-fk="p2" placeholder="A third, if there is one" aria-label="Priority 3" autocomplete="off">
+              <label class="check"><input type="checkbox" data-i="2" data-fk="c2"><span class="check__mark"></span><span class="visually-hidden">Done</span></label>
+            </li>
+          </ol>
+          <p class="block__foot">Three is plenty. The rest can wait.</p>
+        </section>
+
+        <section class="sheet block block--habits" aria-labelledby="h-habits">
+          <header class="block__head">
+            <span class="block__no">II</span>
+            <h2 class="block__title" id="h-habits">Habits</h2>
+            <span class="block__aside" id="habits-aside"></span>
+          </header>
+          <ul class="habits" id="habits"></ul>
+        </section>
+
+        <section class="sheet block block--work" aria-labelledby="h-work">
+          <header class="block__head">
+            <span class="block__no">III</span>
+            <h2 class="block__title" id="h-work">Work</h2>
+            <span class="block__aside" id="work-aside"></span>
+          </header>
+          <div class="enough" id="enough">
+            <div class="enough__track"><div class="enough__fill" id="enough-fill"></div></div>
+            <div class="enough__scale"><span>0</span><span id="enough-label"></span></div>
+          </div>
+          <ul class="work" id="work"></ul>
+          <form class="work__add" id="work-add" autocomplete="off">
+            <input type="text" class="work__in work__in--time" id="work-time" placeholder="1h30" aria-label="Duration, like 1h30, 90 or 1:30">
+            <input type="text" class="work__in work__in--subject" id="work-subject" placeholder="Subject" aria-label="Subject" list="subjects">
+            <button type="submit" class="btn btn--primary btn--small">Add</button>
+          </form>
+          <p class="block__foot" id="work-foot"></p>
+        </section>
+
+        <section class="sheet block block--evening" aria-labelledby="h-evening">
+          <header class="block__head">
+            <span class="block__no">IV</span>
+            <h2 class="block__title" id="h-evening">Evening</h2>
+          </header>
+          <div class="note__wrap">
+            <input type="text" class="note" id="note" data-fk="note" maxlength="160" placeholder="One line about the day" aria-label="One line about the day" autocomplete="off">
+          </div>
+          <p class="block__foot">One line, no more.</p>
+        </section>
+      </main>
+    </div>
+
+    <!-- ===== Week ===== -->
+    <div class="view view--week" id="view-week" hidden>
+      <section class="sheet block week">
+        <ol class="week__list" id="week-list"></ol>
+        <p class="week__sum" id="week-sum"></p>
+      </section>
+    </div>
+
+    <!-- ===== Settings ===== -->
+    <div class="view view--settings" id="view-settings" hidden>
+
+      <section class="sheet block settings" aria-labelledby="s-look">
+        <header class="block__head"><h2 class="block__title" id="s-look">Appearance</h2></header>
+        <div class="segmented" role="radiogroup" aria-label="Theme" id="theme-choice">
+          <label><input type="radio" name="theme" value="system"><span>System</span></label>
+          <label><input type="radio" name="theme" value="light"><span>Light · Fjord</span></label>
+          <label><input type="radio" name="theme" value="dark"><span>Dark · Forest</span></label>
+        </div>
+      </section>
+
+      <section class="sheet block settings" aria-labelledby="s-habits">
+        <header class="block__head"><h2 class="block__title" id="s-habits">Habits</h2></header>
+        <p class="settings__help">Tap the days a habit belongs to. On other days it simply doesn’t appear.</p>
+        <ul class="habit-edit" id="habit-edit"></ul>
+        <form class="habit-add" id="habit-add" autocomplete="off">
+          <input type="text" class="field__input" id="habit-new" placeholder="New habit" aria-label="New habit" maxlength="40">
+          <button type="submit" class="btn btn--quiet">Add</button>
+        </form>
+      </section>
+
+      <section class="sheet block settings" aria-labelledby="s-work">
+        <header class="block__head"><h2 class="block__title" id="s-work">Work &amp; focus</h2></header>
+        <label class="field field--row">
+          <span class="field__label">A full day of work</span>
+          <span class="field__inline"><input type="number" class="field__input field__input--num" id="set-enough" min="0.5" max="12" step="0.5"> hours</span>
+        </label>
+        <label class="field field--row">
+          <span class="field__label">Grace before a focus session breaks</span>
+          <select class="field__input" id="set-grace">
+            <option value="10">10 seconds</option>
+            <option value="15">15 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="60">1 minute</option>
+          </select>
+        </label>
+        <label class="field field--row field--check">
+          <span class="field__label">Soft chime when a session ends</span>
+          <input type="checkbox" id="set-chime">
+        </label>
+      </section>
+
+      <section class="sheet block settings" aria-labelledby="s-sync">
+        <header class="block__head"><h2 class="block__title" id="s-sync">Sync</h2></header>
+        <p class="settings__help">Your notebook is stored in a private GitHub gist. The token and gist ID stay on this device only. See the README for setup.</p>
+        <form id="sync-form" autocomplete="off">
+          <label class="field">
+            <span class="field__label">Personal access token</span>
+            <input type="password" class="field__input" id="set-token" placeholder="github_pat_…" spellcheck="false">
+          </label>
+          <label class="field">
+            <span class="field__label">Gist ID</span>
+            <input type="text" class="field__input" id="set-gist" placeholder="e.g. 3f2a9c…" spellcheck="false">
+          </label>
+          <div class="settings__actions">
+            <button type="submit" class="btn btn--primary">Save &amp; sync</button>
+            <button type="button" class="btn btn--quiet" id="sync-forget">Forget on this device</button>
+          </div>
+          <p class="settings__status" id="sync-detail" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="sheet block settings" aria-labelledby="s-data">
+        <header class="block__head"><h2 class="block__title" id="s-data">Data &amp; shortcuts</h2></header>
+        <div class="settings__actions">
+          <button type="button" class="btn btn--quiet" id="export">Download a copy (JSON)</button>
+        </div>
+        <dl class="keys">
+          <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Previous / next day (or swipe)</dd></div>
+          <div><dt><kbd>T</kbd></dt><dd>Today</dd></div>
+          <div><dt><kbd>W</kbd></dt><dd>Week</dd></div>
+          <div><dt><kbd>F</kbd></dt><dd>Begin focus</dd></div>
+          <div><dt><kbd>Enter</kbd></dt><dd>Next priority</dd></div>
+        </dl>
+      </section>
+    </div>
+
+    <footer class="colophon">
+      <nav class="colophon__nav" aria-label="Views">
+        <a href="#/" id="nav-today">Today</a>
+        <a href="#/week" id="nav-week">Week</a>
+        <a href="#/settings" id="nav-settings">Settings</a>
+      </nav>
+      <span class="colophon__rule"></span>
+      <span class="colophon__mark">Daily Rhythm</span>
+    </footer>
+  </div>
+
+  <datalist id="subjects"></datalist>
+
+  <!-- ===== Focus session ===== -->
+  <div class="focus" id="focus" hidden data-state="setup" role="dialog" aria-modal="true" aria-labelledby="focus-eyebrow">
+    <div class="focus__inner">
+      <p class="focus__eyebrow" id="focus-eyebrow">Focus</p>
+      <p class="focus__time" id="focus-time" aria-live="off">45:00</p>
+
+      <div class="focus__setup">
+        <label class="field">
+          <span class="field__label">Working on</span>
+          <input type="text" class="field__input field__input--large" id="focus-subject" list="subjects" placeholder="Microeconometrics" autocomplete="off">
+        </label>
+        <div class="field">
+          <span class="field__label" id="dial-label">Length</span>
+          <div class="dial">
+            <div class="dial__track" id="dial" tabindex="0" role="slider" aria-labelledby="dial-label"
+                 aria-valuemin="5" aria-valuemax="180" aria-valuenow="45"></div>
+            <span class="dial__needle" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="knit"><canvas id="knit" aria-hidden="true"></canvas></div>
+
+      <p class="focus__msg" id="focus-msg"></p>
+      <div class="focus__actions" id="focus-actions"></div>
+    </div>
+  </div>
+</body>
+</html>
