@@ -13,6 +13,7 @@ const DEFAULT_SETTINGS = {
   enoughMinutes: 300,
   focusChime: true,
   focusGraceSeconds: 15,
+  focusAllowAway: false,
 };
 
 export function emptyDoc() {

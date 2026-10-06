@@ -35,6 +35,7 @@ function savePrefs(p) {
 // ---- Time --------------------------------------------------------------
 
 const graceMs = () => (opts.settings().focusGraceSeconds || 15) * 1000;
+const allowAway = () => !!opts.settings().focusAllowAway;
 const durationMs = () => session.minutes * 60000;
 const elapsedMs = (at = Date.now()) => Math.min(durationMs(), Math.max(0, at - session.startedAt));
 const progress = (at) => elapsedMs(at) / durationMs();
@@ -55,7 +56,7 @@ function reconcile() {
   const now = Date.now();
   const end = session.startedAt + durationMs();
   const away = now - session.lastSeen;
-  if (away > graceMs()) {
+  if (away > graceMs() && !allowAway()) {
     if (session.lastSeen + graceMs() >= end) return complete();
     session.state = 'broken';
     session.stoppedAt = session.lastSeen;
@@ -139,7 +140,9 @@ function show(state) {
     eyebrow.textContent = 'Focus';
     $('focus-time').textContent = clock(chosenMinutes * 60000);
     requestAnimationFrame(() => setDial(chosenMinutes, false));
-    msg.textContent = `Stay on this page while you work. Step away for more than ${opts.settings().focusGraceSeconds} seconds and the yarn slips off the needle.`;
+    msg.textContent = allowAway()
+      ? 'Lock your phone if you like. The knitting carries on while you work.'
+      : `Stay on this page while you work. Step away for more than ${opts.settings().focusGraceSeconds} seconds and the yarn slips off the needle.`;
     button('Not now', 'btn btn--quiet', close);
     button('Begin', 'btn btn--primary', start);
     drawKnit($('knit'), 0);

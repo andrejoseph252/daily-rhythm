@@ -127,10 +127,14 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;   /* no rubber-band bounce at the top and bottom */
+}
 
 body {
   margin: 0;
+  overscroll-behavior: none;
   background: var(--desk);
   color: var(--ink);
   font-family: var(--sans);
@@ -253,7 +257,14 @@ kbd {
   color: var(--ink);
 }
 .field--row select.field__input { width: auto; flex-shrink: 0; }
-.field--check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.field--check input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--accent); }
+.field__hint { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
+.field__input:disabled { opacity: .5; }
+
+/* iOS zooms into any field with text under 16px; keep them at 16px on touch screens. */
+@media (pointer: coarse) {
+  .field__input:not(.field__input--large), .work__in--subject { font-size: 16px; }
+}
 
 .is-invalid { box-shadow: inset 0 -1px 0 var(--warn) !important; }
 .is-invalid::placeholder { color: var(--warn) !important; }
@@ -940,6 +951,7 @@ body[data-view="today"] .hero__body--page { display: none; }
   background:
     radial-gradient(120% 60% at 50% 0%, var(--sky-soft), transparent 70%),
     var(--desk);
+  overscroll-behavior: none;
   animation: focus-in .35s ease-out;
 }
 @keyframes focus-in { from { opacity: 0; } }

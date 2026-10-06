@@ -85,6 +85,7 @@ Press **Begin focus** (or `F`, or open `#/focus`), name what you're working on, 
 
 - **Stay on the page.** If you switch tabs, switch apps or lock the phone for longer than the grace period (15 s by default), the yarn slips off the needle and the piece is lost. You can still log the minutes you'd done.
 - The screen is kept awake during a session (where the browser allows it).
+- **Phone may be locked during focus** (Settings → Work & focus): with this on, locking the phone or leaving the page never breaks a session, and the knitting catches up when you come back. A web app can't tell locking the phone apart from switching apps, so with this on it's an honour system. iOS also can't play the chime on the lock screen, so the session is marked finished and logged when you next open the app.
 - If you end early or get interrupted, the time you put in is logged **rounded up to the next 5 minutes** (as long as at least a minute has passed).
 - When the timer ends, the session is logged as a work block automatically, marked with a small knitted swatch. A soft chime plays if it's enabled.
 - On a laptop, working in another *window* is fine. Only leaving the tab or minimising the browser counts as stepping away.
@@ -124,7 +125,8 @@ The gist holds one file, `data.json`:
   "settings": {
     "enoughMinutes": 300,
     "focusChime": true,
-    "focusGraceSeconds": 15
+    "focusGraceSeconds": 15,
+    "focusAllowAway": false
   },
   "habits": [
     { "id": "walk", "label": "Walk", "active": true, "days": [1, 2, 3, 4, 5, 6, 7] },

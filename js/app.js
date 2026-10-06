@@ -319,6 +319,8 @@ function renderSettings() {
   setValue($('set-enough'), String((s.enoughMinutes || 300) / 60));
   $('set-grace').value = String(s.focusGraceSeconds || 15);
   $('set-chime').checked = !!s.focusChime;
+  $('set-away').checked = !!s.focusAllowAway;
+  $('set-grace').disabled = !!s.focusAllowAway;
 
   const auth = getAuth();
   setValue($('set-gist'), auth?.gistId || '');
@@ -486,6 +488,9 @@ function wireSettings() {
   });
   $('set-grace').addEventListener('change', e => {
     store.updateMeta(doc => { doc.settings.focusGraceSeconds = +e.target.value; });
+  });
+  $('set-away').addEventListener('change', e => {
+    store.updateMeta(doc => { doc.settings.focusAllowAway = e.target.checked; });
   });
   $('set-chime').addEventListener('change', e => {
     store.updateMeta(doc => { doc.settings.focusChime = e.target.checked; });
